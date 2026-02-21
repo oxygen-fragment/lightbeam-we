@@ -1,6 +1,8 @@
 // Network request observer for Lightbeam
 
 import { extractDomain, isThirdParty } from '../lib/domain-utils';
+import { loadGraph, saveGraph } from '../storage/storage-api';
+import { applyRequest } from '../storage/graph-updater';
 
 export interface RequestRecord {
   topLevelDomain: string;
@@ -26,7 +28,7 @@ export function initNetworkObserver(): void {
           requestType: details.type,
         };
 
-        console.log('Request record:', JSON.stringify(record));
+        await saveGraph(applyRequest(record, await loadGraph()));
       } catch {
         // Tab may have closed before we could query it
       }

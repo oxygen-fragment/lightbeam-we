@@ -1,51 +1,44 @@
 /**
- * sanitize.test.ts — Precode test stub
+ * sanitize.test.ts
  * Target: Task 6.3 (input sanitization for display)
- * Status: FAILING (implementation pending)
  */
 
 import { describe, it, expect } from 'vitest';
-// import { sanitizeForDisplay } from '../src/lib/sanitize';
+import { sanitizeForDisplay } from '../src/lib/sanitize';
 
 describe('sanitize', () => {
   describe('sanitizeForDisplay', () => {
     it('escapes HTML script tags', () => {
-      // const input = '<script>alert(1)</script>';
-      // const result = sanitizeForDisplay(input);
-      // expect(result).not.toContain('<script>');
-      // expect(result).toContain('&lt;script&gt;');
-      expect(true).toBe(false); // Placeholder: remove when implemented
+      const input = '<script>alert(1)</script>';
+      const result = sanitizeForDisplay(input);
+      expect(result).not.toContain('<script>');
+      expect(result).toContain('&lt;script&gt;');
     });
 
     it('escapes HTML entities', () => {
-      // expect(sanitizeForDisplay('<div>')).toBe('&lt;div&gt;');
-      // expect(sanitizeForDisplay('"quotes"')).toBe('&quot;quotes&quot;');
-      // expect(sanitizeForDisplay("'apostrophe'")).toBe('&#39;apostrophe&#39;');
-      expect(true).toBe(false);
+      expect(sanitizeForDisplay('<div>')).toBe('&lt;div&gt;');
+      expect(sanitizeForDisplay('"quotes"')).toBe('&quot;quotes&quot;');
+      expect(sanitizeForDisplay("'apostrophe'")).toBe('&#39;apostrophe&#39;');
     });
 
     it('handles ampersands', () => {
-      // expect(sanitizeForDisplay('foo & bar')).toBe('foo &amp; bar');
-      expect(true).toBe(false);
+      expect(sanitizeForDisplay('foo & bar')).toBe('foo &amp; bar');
     });
 
     it('preserves safe strings', () => {
-      // expect(sanitizeForDisplay('example.com')).toBe('example.com');
-      // expect(sanitizeForDisplay('normal text 123')).toBe('normal text 123');
-      expect(true).toBe(false);
+      expect(sanitizeForDisplay('example.com')).toBe('example.com');
+      expect(sanitizeForDisplay('normal text 123')).toBe('normal text 123');
     });
 
     it('handles null/undefined gracefully', () => {
-      // expect(sanitizeForDisplay(null as any)).toBe('');
-      // expect(sanitizeForDisplay(undefined as any)).toBe('');
-      expect(true).toBe(false);
+      expect(sanitizeForDisplay(null)).toBe('');
+      expect(sanitizeForDisplay(undefined)).toBe('');
     });
 
     it('truncates excessively long strings', () => {
-      // const longString = 'a'.repeat(10000);
-      // const result = sanitizeForDisplay(longString);
-      // expect(result.length).toBeLessThanOrEqual(1000);
-      expect(true).toBe(false);
+      const longString = 'a'.repeat(10000);
+      const result = sanitizeForDisplay(longString);
+      expect(result.length).toBeLessThanOrEqual(1000);
     });
   });
 });

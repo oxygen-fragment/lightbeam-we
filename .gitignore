@@ -3,3 +3,15 @@ node_modules
 npm-debug.log
 src/ext-libs
 src/web-ext-artifacts
+.vscode/
+audit.json
+.claude/
+CLAUDE.md
+ACCEPTANCE.md
+SPEC.md
+PLAN.md
+PROGRESS.md
+mcp.tools.json
+templates/
+package-lock.json
+dist/

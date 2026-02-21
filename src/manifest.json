@@ -1,44 +1,16 @@
 {
-  "manifest_version": 2,
-  "name": "Firefox Lightbeam",
-  "version": "2.1.0",
-
-  "description": "Firefox Lightbeam is a Firefox browser extension that uses interactive visualizations to show you the relationships between third parties and the sites you visit.",
-  "homepage_url": "https://github.com/mozilla/lightbeam-we",
-
-  "icons": {
-    "48": "images/lightbeam-48.png",
-    "96": "images/lightbeam-96.png"
-  },
-
-  "permissions": [
-    "webRequest",
-    "<all_urls>",
-    "tabs",
-    "cookies",
-    "storage",
-    "downloads",
-    "privacy"
-  ],
-
-  "browser_action": {
-    "default_icon": "images/lightbeam-48.png",
-    "default_title": "Firefox Lightbeam"
-  },
-
-  "applications": {
-    "gecko": {
-      "id": "jid1-F9UJ2thwoAm5gQ@jetpack",
-      "strict_min_version": "52.0"
-    }
-  },
-
+  "manifest_version": 3,
+  "name": "Lightbeam",
+  "version": "3.0.0",
+  "description": "Visualize third-party tracking on the web",
   "background": {
-    "scripts": [
-      "ext-libs/dexie.js",
-      "js/store.js",
-      "js/capture.js",
-      "js/background.js"
-    ]
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "permissions": ["webRequest", "tabs", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Lightbeam"
   }
 }

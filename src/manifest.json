@@ -12,5 +12,8 @@
   "action": {
     "default_popup": "popup.html",
     "default_title": "Lightbeam"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none';"
   }
 }

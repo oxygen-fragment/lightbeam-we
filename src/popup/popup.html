@@ -4,14 +4,20 @@
     <meta charset="UTF-8" />
     <title>Lightbeam</title>
     <style>
-      body { width: 480px; margin: 0; padding: 0; font-family: sans-serif; background: #0d1117; }
-      h1 { font-size: 1rem; margin: 8px 12px; color: #e6edf3; }
+      body { width: 480px; margin: 0; padding: 0; font-family: sans-serif; background: #0d1117; color: #e6edf3; }
+      h1 { font-size: 1rem; margin: 8px 12px; }
       canvas { display: block; }
+      #info-panel { padding: 8px 12px; background: #161b22; border-top: 1px solid #30363d; font-size: 0.85rem; }
+      #panel-name { font-weight: bold; margin-right: 8px; }
+      #panel-count { color: #8b949e; }
     </style>
   </head>
   <body>
     <h1>Lightbeam</h1>
     <canvas id="graph" width="480" height="360"></canvas>
+    <div id="info-panel" hidden>
+      <span id="panel-name"></span><span id="panel-count"></span>
+    </div>
     <script type="module" src="popup.js"></script>
   </body>
 </html>

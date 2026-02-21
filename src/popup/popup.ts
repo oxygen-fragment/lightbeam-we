@@ -1,5 +1,6 @@
 import { loadGraph } from '../storage/storage-api.js';
 import { drawNodes, drawEdges, type RenderNode, type RenderEdge } from './graph-renderer.js';
+import { updateInfoPanel } from './info-panel.js';
 import type { GraphData } from '../storage/schema.js';
 
 const canvas = document.getElementById('graph') as HTMLCanvasElement;
@@ -59,6 +60,7 @@ async function init(): Promise<void> {
     const cy = (e.clientY - rect.top) * scaleY;
     const hit = hitTest(cx, cy);
     selectedLabel = hit === selectedLabel ? null : hit; // toggle off on re-click
+    updateInfoPanel(selectedLabel, renderEdges);
   });
 
   chrome.storage.onChanged.addListener((_changes, area) => {

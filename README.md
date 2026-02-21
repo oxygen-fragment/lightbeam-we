@@ -1,46 +1,88 @@
-# Firefox Lightbeam
-This is the web extension version of the Firefox Lightbeam add-on for visualizing HTTP requests between websites in real time.
+# Lightbeam
 
-The Firefox Lightbeam extension by Mozilla is a key tool for Mozilla to educate the public about privacy.
+Lightbeam is a browser extension that visualizes the third-party tracking relationships between sites you visit. It captures network requests in real time and renders them as an interactive graph in your browser's toolbar popup.
 
-![lightbeam-screenshot](/docs/images/lightbeam.gif)
+Built with Manifest V3, TypeScript, and native Canvas — no external libraries, no telemetry.
 
-## Quick Start
+---
 
-### Clone the repository
+## Installation
 
-**Note** This repository uses a [submodule](https://github.com/mozilla-services/shavar-prod-lists) to allow some third party requests. To ensure the submodule is cloned along with this repository, use a modified `clone` command:
-`git clone --recursive https://github.com/mozilla/lightbeam-we.git`
+### Requirements
 
-### Run the web extension
+- Chrome 109+ or Firefox 109+ (MV3 support required)
+- Node.js 18+ and npm (for building from source)
 
-There are a couple ways to try out this web extension:
+### Build from source
 
-1. Open Firefox and load `about:debugging` in the URL bar.
-    - Click the [Load Temporary Add-on](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Temporary_Installation_in_Firefox) button and select the `manifest.json` file within the directory of this repository.
-    - You should now see the Lightbeam icon on the top right bar of the browser.
-    - Click the Lightbeam icon to launch the web extension.
+```bash
+git clone https://github.com/mozilla/lightbeam-we.git
+cd lightbeam-we
+npm install
+npm run build
+```
 
-2. Install the [web-ext](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Getting_started_with_web-ext) tool, change into the `src` directory of this repository, and type `web-ext run`.
-    - This will launch Firefox and install the extension automatically.
-    - This tool gives you some additional development features such as [automatic reloading](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Getting_started_with_web-ext#Automatic_extension_reloading).
+The compiled extension is written to `dist/`.
 
-## Development Guide
+### Load in Chrome
 
-### Download dependencies
-Run `npm run build`.
+1. Open `chrome://extensions`
+2. Enable **Developer mode** (top right toggle)
+3. Click **Load unpacked** and select the `dist/` directory
+4. The Lightbeam icon appears in the toolbar
 
-### Update the submodule
-To manually update the submodule at any time during development, run `git submodule update`.
+### Load in Firefox
 
-### Testing
-Run `npm run test` to check that everything is OK.
+1. Open `about:debugging#/runtime/this-firefox`
+2. Click **Load Temporary Add-on**
+3. Select `dist/manifest.json`
 
-* If you have installed `eslint` globally, you will have to install globally the following `eslint` plugins too:
-    - `eslint-plugin-json`
-    - `eslint-plugin-mocha`
-* Test suites include lint and unit testing. You can individually run lint or unit tests using the following commands:
-    * `npm run lint:eslint`
-    * `npm run test:karma`
+---
 
-Eslint is used for linting. Karma, Mocha & Chai are used for unit testing. Additionally the test suites are run on the Travis service providing continuous integration support.
+## Privacy Model
+
+Lightbeam is designed to observe tracking — not to perform it.
+
+- **All data stays local.** Graph data is stored in `browser.storage.local` only. Nothing is sent to any external server.
+- **No telemetry.** The extension makes zero outbound network requests of its own.
+- **No remote code.** A strict Content Security Policy (`script-src 'self'`) blocks any external scripts from loading.
+- **Minimal permissions.** Only `webRequest` (observe requests), `tabs` (resolve the top-level URL), and `storage` (local persistence) are requested.
+- **Data pruning.** Old observations can be pruned by age to keep storage bounded.
+- **Hostile input treated as untrusted.** Domain names and request metadata captured from the network are never injected into the DOM as raw HTML.
+
+---
+
+## Threat Model
+
+### In scope
+
+| Threat | Mitigation |
+|---|---|
+| XSS via captured domain names | `sanitizeForDisplay()` escapes all HTML entities; DOM writes use `textContent` only |
+| Remote code injection | CSP `script-src 'self'`; no `eval` or `new Function` anywhere |
+| Data exfiltration | No external network calls; enforced by CSP and code review |
+| Stale data accumulation | `pruneOldEntries(maxAge)` removes aged-out observations |
+| Overly broad permissions | Permissions minimized and justified in `SPEC.md` |
+
+### Out of scope
+
+- **Accuracy of tracking detection** — Lightbeam is a visualization tool, not a blocker. It may miss some trackers (e.g. first-party bounce tracking) and may surface false positives.
+- **Browser-level attacks** — Compromised browser or OS is outside this extension's threat model.
+- **Persistent background page** — MV3 service workers can be terminated by the browser at any time; Lightbeam persists state to storage to survive restarts.
+
+---
+
+## Development
+
+```bash
+npm run build      # production build → dist/
+npm run dev        # watch mode
+npm run typecheck  # TypeScript type check
+npm test           # unit tests (Vitest)
+```
+
+---
+
+## License
+
+MPL-2.0 — see [LICENSE](LICENSE).

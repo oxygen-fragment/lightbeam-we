@@ -7,6 +7,7 @@ const ctx = canvas.getContext('2d')!;
 
 let renderNodes: RenderNode[] = [];
 let renderEdges: RenderEdge[] = [];
+let selectedLabel: string | null = null;
 
 function graphToRender(data: GraphData): void {
   const domains = Object.keys(data.sites);
@@ -29,10 +30,19 @@ function graphToRender(data: GraphData): void {
   renderEdges = data.edges.map((e) => ({ fromLabel: e.from, toLabel: e.to }));
 }
 
+function hitTest(cx: number, cy: number): string | null {
+  for (const node of renderNodes) {
+    const dx = cx - node.x;
+    const dy = cy - node.y;
+    if (Math.sqrt(dx * dx + dy * dy) <= node.radius) return node.label;
+  }
+  return null;
+}
+
 function render(): void {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawEdges(ctx, renderEdges, renderNodes);
-  drawNodes(ctx, renderNodes);
+  drawEdges(ctx, renderEdges, renderNodes, selectedLabel);
+  drawNodes(ctx, renderNodes, selectedLabel);
   requestAnimationFrame(render);
 }
 
@@ -40,6 +50,16 @@ async function init(): Promise<void> {
   const data = await loadGraph();
   graphToRender(data);
   requestAnimationFrame(render);
+
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const cx = (e.clientX - rect.left) * scaleX;
+    const cy = (e.clientY - rect.top) * scaleY;
+    const hit = hitTest(cx, cy);
+    selectedLabel = hit === selectedLabel ? null : hit; // toggle off on re-click
+  });
 
   chrome.storage.onChanged.addListener((_changes, area) => {
     if (area === 'local') {

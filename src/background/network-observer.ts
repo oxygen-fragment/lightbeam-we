@@ -44,6 +44,7 @@ export function initNetworkObserver(): void {
       try {
         const tab = await chrome.tabs.get(details.tabId);
         if (!tab.url) return;
+        if (!/^https?:\/\//i.test(tab.url)) return; // Skip chrome://, about:, etc.
         if (!isThirdParty(tab.url, details.url)) return; // Skip first-party
 
         const record: RequestRecord = {
